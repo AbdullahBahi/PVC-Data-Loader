@@ -66,7 +66,7 @@ if __name__ == '__main__':
     cg = CoinGeckoAPI()
 
     ## Git a list oc supported coins (without tokens)
-    coins = pd.read_excel('coins.xlsx').ID.to_list()
+    coins = pd.read_csv('coins.csv').ID.to_list()
 
     ## Initialize variables for download loop
     PVC = pd.DataFrame()
