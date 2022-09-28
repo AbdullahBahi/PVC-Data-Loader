@@ -75,6 +75,7 @@ if __name__ == '__main__':
     start = time.time()
 
     try:
+        print('Downloading data ..')
         for idx, coin_id in enumerate(coins):
             # if idx < 1:
             #     continue
@@ -88,7 +89,7 @@ if __name__ == '__main__':
                 while not finished_sleeping:    
                     try:
                         pvc = get_pvc_by_id(coin_id, n=args.num_data_points, freq=args.freq)
-                        print('Done sleeping, continuing iteration.\n')
+                        print('Done sleeping, Downloading data ..\n')
                         finished_sleeping = True
                     except:
                         time.sleep(1)
