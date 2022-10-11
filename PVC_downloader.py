@@ -93,6 +93,7 @@ if __name__ == '__main__':
                         print('Done sleeping, Downloading data ..\n')
                         finished_sleeping = True
                     except:
+                        print('Still sleeping!')
                         time.sleep(1)
             if pvc is not None:
                 PVC = pd.concat([PVC, pvc])
