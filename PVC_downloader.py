@@ -39,7 +39,6 @@ def get_daily_market_cap_by_id(coin_id, min_days=200):
         return caps
 
 def get_pvc_by_id(coin_id, n=None, freq=None):
-    cg = CoinGeckoAPI()
     if n is None:
         n = 'max'
     if freq is None:
