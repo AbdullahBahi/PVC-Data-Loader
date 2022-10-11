@@ -73,14 +73,14 @@ if __name__ == '__main__':
     PVC = pd.DataFrame()
     coin_counter = 0
     missing_coin_counter = 0
-    checkpoint_counter = 0
+    checkpoint_counter = 3
     start = time.time()
 
     try:
         print('Downloading data ..')
         for idx, coin_id in enumerate(coins):
-            # if idx < 1:
-            #     continue
+            if idx < 2864:
+                continue
             coin_counter += 1
             try:
                 pvc = get_pvc_by_id(coin_id, n=args.num_data_points, freq=args.freq)
@@ -107,9 +107,9 @@ if __name__ == '__main__':
             
             if coin_counter % 100 == 0:
                 end = time.time()
-                print(f'\n{round((coin_counter/len(coins))*100, 2)}% is finished!')
+                print(f'\n{round(((coin_counter+2863)/len(coins))*100, 2)}% is finished!')
                 print(f'Elapsed Time : {convert_seconds(end-start)}')
-                print(f'Estimated Remaining Time : {convert_seconds(((end-start)/coin_counter)*(len(coins)-coin_counter))}')
+                print(f'Estimated Remaining Time : {convert_seconds(((end-start)/coin_counter)*(len(coins)-coin_counter-2863))}')
                 print(f'{checkpoint_counter} Checkpoints are saved!\n')
             
             if len(PVC) > 500000:
@@ -123,6 +123,7 @@ if __name__ == '__main__':
     except:
         PVC.to_excel(join(CWD, 'data','pvc_'+str(checkpoint_counter)+'.xlsx'))
         print(f'last index is {idx}')
+        print(f'Number of missing coins is {missing_coin_counter}')
     else:
         PVC.to_excel(join(CWD, 'data','pvc_'+str(checkpoint_counter)+'.xlsx'))
         print(f'All Data is downloaded Successfully! last index is {idx}')
