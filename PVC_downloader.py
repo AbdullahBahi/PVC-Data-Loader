@@ -39,17 +39,19 @@ def get_daily_market_cap_by_id(coin_id, min_days=200):
         return caps
 
 def get_pvc_by_id(coin_id, n=None, freq=None):
+    cg = CoinGeckoAPI()
     if n is None:
         n = 'max'
     if freq is None:
         freq = 'daily'
-    p = pd.DataFrame(cg.get_coin_market_chart_by_id('01coin', 'usd', n,interval=freq)['prices'])
-    v = pd.DataFrame(cg.get_coin_market_chart_by_id('01coin', 'usd', n,interval=freq)['total_volumes'])
-    c = pd.DataFrame(cg.get_coin_market_chart_by_id('01coin', 'usd', n,interval=freq)['market_caps'])
+    data = cg.get_coin_market_chart_by_id(coin_id, 'usd', n,interval=freq)
+    p = pd.DataFrame(data['prices'])
+    v = pd.DataFrame(data['total_volumes'])
+    c = pd.DataFrame(data['market_caps'])
     pvc = pd.concat([p,v,c], axis=1)
     pvc.columns = ['Date', 'Price', 'to_drop', 'Volume', 'to_drop', 'Market_Cap']
     pvc.drop(['to_drop'], axis=1, inplace=True)
-    pd.to_datetime([datetime.datetime.fromtimestamp(d / 1e3) for d in pvc['Date']]).round('s') 
+    pvc['Date'] = pd.to_datetime([datetime.datetime.strftime(datetime.datetime.fromtimestamp(d / 1e3), format='%Y-%m-%d %H:%M:%S') for d in pvc['Date']]).round('s')
     pvc.set_index(['Date'], inplace=True)
     pvc['Asset'] = [coin_id]*len(pvc)
     return pvc
