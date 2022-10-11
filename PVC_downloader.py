@@ -92,8 +92,8 @@ if __name__ == '__main__':
                         pvc = get_pvc_by_id(coin_id, n=args.num_data_points, freq=args.freq)
                         print('Done sleeping, Downloading data ..\n')
                         finished_sleeping = True
-                    except:
-                        print('Still sleeping!')
+                    except Exception as e:
+                        print(e)
                         time.sleep(1)
             if pvc is not None:
                 PVC = pd.concat([PVC, pvc])
