@@ -72,6 +72,7 @@ if __name__ == '__main__':
     ## Initialize variables for download loop
     PVC = pd.DataFrame()
     coin_counter = 0
+    missing_coin_counter = 0
     checkpoint_counter = 0
     start = time.time()
 
@@ -83,18 +84,24 @@ if __name__ == '__main__':
             coin_counter += 1
             try:
                 pvc = get_pvc_by_id(coin_id, n=args.num_data_points, freq=args.freq)
-            except:
-                finished_sleeping = False
-                print(f'\nPrices, Volumes and Market Caps for {coin_counter} Coins have been downloaded successfully!')
-                print('Minutely Rate limit has been reached! sleeping until next call ..')
-                while not finished_sleeping:    
-                    try:
-                        pvc = get_pvc_by_id(coin_id, n=args.num_data_points, freq=args.freq)
-                        print('Done sleeping, Downloading data ..\n')
-                        finished_sleeping = True
-                    except Exception as e:
-                        print(e)
-                        time.sleep(1)
+            except ValueError as e:
+                try:
+                    if e.args[0]['error'] == 'Could not find coin with the given id':
+                        missing_coin_counter += 1
+                        print('invalid coin id')
+                        continue
+                except:
+                    if e.args[0]['status']['error_code'] == 429:
+                        finished_sleeping = False
+                        print(f'\nPrices, Volumes and Market Caps for {coin_counter} Coins have been downloaded successfully!')
+                        print('Minutely Rate limit has been reached! sleeping until next call ..')
+                        while not finished_sleeping:    
+                            try:
+                                pvc = get_pvc_by_id(coin_id, n=args.num_data_points, freq=args.freq)
+                                print('Done sleeping, Downloading data ..\n')
+                                finished_sleeping = True
+                            except:
+                                time.sleep(1)
             if pvc is not None:
                 PVC = pd.concat([PVC, pvc])
             
@@ -119,5 +126,5 @@ if __name__ == '__main__':
     else:
         PVC.to_excel(join(CWD, 'data','pvc_'+str(checkpoint_counter)+'.xlsx'))
         print(f'All Data is downloaded Successfully! last index is {idx}')
-        ## this should print 6259
+        print(f'Number of missing coins is {missing_coin_counter}')
 
